@@ -16,36 +16,57 @@ const saveNotes = (notes) => {
     fs.writeFileSync('./notes.json', dataJSON);
 }
 
-const getNotes = () => {
+const readNote = (title) => {
     const notes = loadNotes();
-    return notes;
-}
-
-const addNotes = (title1, body) => {
-    const notes = loadNotes();
-    if(!notes.find( note => note.title === title1 )) {
-        notes.push({
-            title:title1,
-            body:body
-        });
-        saveNotes(notes);
-        console.log(chalk.green.inverse('Note added!'));
+    const note = notes.find( note => note.title === title )
+    if(note) {
+        console.log(chalk.inverse(note.title));
+        console.log(note.body);
     } else {
-        console.log(chalk.red.inverse("Note title taken"));
+        console.log(chalk.red.inverse("NO NOTES FOUND"));
     }
 }
 
-const removeNotes = (title1) => {
+const addNotes = (title, body) => {
     const notes = loadNotes();
-    const index = notes.findIndex(note => note.title ===title1 );
+    if(!notes.find( note => note.title === title )) {
+        notes.push({
+            title:title,
+            body:body
+        });
+        saveNotes(notes);
+        console.log(chalk.green.inverse('NOTE ADDED!'));
+    } else {
+        console.log(chalk.red.inverse("NOTE TITLE TAKEN"));
+    }
+}
+
+const removeNotes = (title) => {
+    const notes = loadNotes();
+    const index = notes.findIndex(note => note.title === title );
     if(index !== -1) {
         notes.splice(index,1);
         saveNotes(notes);
-        console.log(chalk.green.inverse(`Note removed!`));
+        console.log(chalk.green.inverse(`NOTE REMOVED!`));
     } else {
-        console.log(chalk.red.inverse('Note not found!'));
+        console.log(chalk.red.inverse('NO NOTE FOUND!'));
     }
     
 }
 
-module.exports = { getNotes, addNotes, removeNotes };
+const listNotes = () => {
+    const notes = loadNotes();
+
+    if(notes.length > 0) {
+        console.log(chalk.inverse("MY NOTES"));
+    
+        notes.forEach(note => {
+            console.log(note.title);
+        });
+    } else {
+        console.log(chalk.red.inverse('NO NOTES FOUND'));
+    }
+    
+}
+
+module.exports = { readNote, addNotes, removeNotes, listNotes };
